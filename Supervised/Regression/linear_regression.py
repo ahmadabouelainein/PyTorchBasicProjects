@@ -22,11 +22,10 @@ class DataSet:
         # plt.figure()
         plt.xlim([0, 1])
         plt.ylim([0, 1])
-        plt.scatter(self.X_train, self.y_train, marker="s", c="y", s=14, label="Training data")
-        plt.scatter(self.X_test, self.y_test, marker="x", c="c", s=14, label="Testing data")
-        pred=plt.scatter(self.X_test, predictions.detach().numpy(), c="m", s=14, label="Predictions")
+        scats= [plt.scatter(self.X_train, self.y_train, marker="s", c="y", s=14, label="Training data"),  plt.scatter(self.X_test, self.y_test, marker="x", c="c", s=14, label="Testing data"), plt.scatter(self.X_test, predictions.detach().numpy(), c="m", s=14, label="Predictions")]
         plt.pause(0.05)
-        pred.remove()
+        for scat in scats: scat.remove()
+        return scats
 class LinearRegressionModel(nn.Module):
     def __init__(self):
         super().__init__()
@@ -40,7 +39,7 @@ class LinearRegressionModel(nn.Module):
   
     def training_loop(self, epochs, data):
         loss_fn = nn.L1Loss()
-        optimizer = torch.optim.SGD(params=self.parameters(), lr=0.003)
+        optimizer = torch.optim.SGD(params=self.parameters(), lr=0.002)
 
         for epoch in range(epochs):
             self.train()# put model in training mode
@@ -58,7 +57,8 @@ class LinearRegressionModel(nn.Module):
                                     data.y_test)
             if epoch % 10 == 0:
                 print(f"Epoch: {epoch} | Loss: {loss:.5f} | Test loss: {test_loss:.5f}")
-                data.plot_data(self(data.X_test))
+                
+                plt.legend(data.plot_data(self(data.X_test)), ["Training","Testing",f"Prediction after {epoch+10} loops"])
         plt.show()
         return self(data.X_test)
 
