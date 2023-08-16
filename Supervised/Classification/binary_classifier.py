@@ -37,12 +37,14 @@ class CircleModelV0(nn.Module):
         self.layer_3 = nn.Linear(50,1)
     def forward(self, x):
         return self.layer_3(self.relu(self.layer_2(self.layer_1(x))))
+    
     def accuracy_fn(self,y_true, y_pred):
         correct = torch.eq(y_true, y_pred).sum().item() # torch.eq() calculates where two tensors are equal
         acc = (correct / len(y_pred)) * 100 
         return acc
+    
     def training_loop(self, epochs, data):
-        loss_fn =  loss_fn=nn.BCEWithLogitsLoss()
+        loss_fn = nn.BCEWithLogitsLoss()
         optimizer = torch.optim.SGD(params=self.parameters(), lr=0.1)
 
         for epoch in range(epochs):
@@ -74,7 +76,6 @@ class CircleModelV0(nn.Module):
 if __name__=="__main__":
     dataset= DataSet()
     model_0 = CircleModelV0()
-    un_trained_pred = model_0(dataset.X_test)
     model_0.training_loop(epochs=1000,data=dataset)
     # dataset.plot_data(dataset.X, dataset.y)
 
